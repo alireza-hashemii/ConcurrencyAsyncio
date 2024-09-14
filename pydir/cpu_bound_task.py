@@ -79,26 +79,49 @@ async def delay(delay_seconds: float) -> float:
 
 # asyncio.run(main())
 
-async def getting_cold():
-    print('The The tea is getting cold...')
-    await delay(4)
-    return True
+# async def getting_cold():
+#     print('The The tea is getting cold...')
+#     await delay(4)
+#     return True
 
-async def coffe_maker():
-    print("The machine is making coffe...")
-    await delay(2)
-    return True
+# async def coffe_maker():
+#     print("The machine is making coffe...")
+#     await delay(2)
+#     return True
+
+# async def main():
+#     rs_get =  asyncio.create_task(getting_cold())
+#     rs_coffe =  asyncio.create_task(coffe_maker())
+
+#     await rs_coffe
+#     await rs_get
+#     # print(rs_coffe)
+#     # print(rs_get)
+
+# start = time.time()
+# asyncio.run(main())
+# end = time.time()
+# print(f"whole operation took about {end - start} second(s)")
+
+
+
+
 
 async def main():
-    rs_get =  asyncio.create_task(getting_cold())
-    rs_coffe =  asyncio.create_task(coffe_maker())
+    tsk_delay = asyncio.create_task(delay(10))
 
-    await rs_coffe
-    await rs_get
-    # print(rs_coffe)
-    # print(rs_get)
+    elspsed_time = 0
 
-start = time.time()
+    while not tsk_delay.done():
+        await asyncio.sleep(1)
+        elspsed_time += 1
+        if elspsed_time == 5:
+            tsk_delay.cancel()
+    
+    try:
+        await tsk_delay
+
+    except asyncio.exceptions.CancelledError:
+        print("took more than 5 secs.")
+
 asyncio.run(main())
-end = time.time()
-print(f"whole operation took about {end - start} second(s)")
